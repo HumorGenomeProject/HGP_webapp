@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-/* Will be provided username and password field names */
-/* username, password are the field names for the POST request*/
-/* userField, passwordField are the params for the form*/
+/* Will be provided email and password field names */
+/* email, password are the field names for the POST request*/
+/* emailField, passwordField are the params for the form*/
 
 
 {% block content %}
     <h1>Login to Joke Review</h1>
 
     <form id="loginForm" name="loginForm">
-    <input type="text" id="{{ userField }}"/>
+    <input type="text" id="{{ emailField }}"/>
     <br/>
     <input type="password" id="{{ passwordField }}" />
     <br/>
@@ -17,51 +17,69 @@
     </form>
     <br/>
 
-    <p>
-    USERNAME: {{ username}} <br/>
-    </p>
-
 {% endblock %}
 
 {% block scripts %}
 <script>
-    var submitform = function() {
-        var username = $('#{{ userField }}')[0].value;
-        var password = $('#{{ passwordField }}')[0].value;
 
-        var formData = {
-            {{ username }}: username,
-            {{ password }}: password
-        };
-
-        var data = JSON.stringify(formData);
-
-        console.log(formData);
-
-        /* Make AJAX HTTP Post Reuqest */
-        var posting = $.post({
-          url: "/signin",
-          data: data,
-          success: function(result) {
-            console.log("SUCCESS");
-            console.log(JSON.stringify(result));
-          },
-          error: function(data, err) {
-            console.log("ERROR");
-            console.log(data);
-            console.log(err);
-          },
-
-          dataType: "json",
-          contentType : "application/json;charset=UTF-8",
+/* Used to allow enter button to submit form when inside the form */
+$(function() {
+    $('#loginForm').each(function() {
+        $(this).find('input').keypress(function(e) {
+            // Enter pressed?
+            if(e.which == 10 || e.which == 13) {
+                submitform();
+            }
         });
+    });
+});
 
-        /*posting.done(function( data ) {
-            console.log("Done - Data");
-            console.log(data);
-            alert(data);
-        });*/
 
-    }
+var submitform = function() {
+    var email = $('#{{ emailField }}')[0].value;
+    var password = $('#{{ passwordField }}')[0].value;
+
+    var formData = {
+        {{ email }}: email,
+        {{ password }}: password
+    };
+    var data = JSON.stringify(formData);
+
+    console.log(data);
+
+    /* Make AJAX HTTP Post Reuqest */
+    /*
+     * If successful, redirect user
+     * If unsuccessful, show message on the page form
+     */
+    var posting = $.post({
+        url: "/signin",
+        data: data,
+        success: function(response) {
+            console.log("POSTed");
+            if (response) {
+                if (response.redirect) {
+                    // Login success
+                    window.location.href = response.redirect;
+                } else {
+                    // Login failed
+                    console.log("Incorrect username or password");
+                    updateform();
+                }
+            }
+        },
+        error: function(data, err) {
+            console.log("POST error");
+        },
+
+        dataType: "json",
+        contentType : "application/json;charset=UTF-8",
+    });
+}
+
+var updateform = function() {
+    // Do something
+    console.log("Updating form.")
+}
 </script>
 {% endblock %}
