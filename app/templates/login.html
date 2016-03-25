@@ -9,77 +9,16 @@
     <h1>Login to Joke Review</h1>
 
     <form id="loginForm" name="loginForm">
-    <input type="text" id="{{ emailField }}"/>
+    Email: <input type="text" id="emailField"/>
     <br/>
-    <input type="password" id="{{ passwordField }}" />
+    Password: <input type="password" id="passwordField" />
     <br/>
-    <input value="Submit" type="button" onclick="submitform()" />
+    <input value="Submit" type="button" onclick="loginSubmit()" />
     </form>
     <br/>
 
 {% endblock %}
 
 {% block scripts %}
-<script>
-
-/* Used to allow enter button to submit form when inside the form */
-$(function() {
-    $('#loginForm').each(function() {
-        $(this).find('input').keypress(function(e) {
-            // Enter pressed?
-            if(e.which == 10 || e.which == 13) {
-                submitform();
-            }
-        });
-    });
-});
-
-
-var submitform = function() {
-    var email = $('#{{ emailField }}')[0].value;
-    var password = $('#{{ passwordField }}')[0].value;
-
-    var formData = {
-        {{ email }}: email,
-        {{ password }}: password
-    };
-    var data = JSON.stringify(formData);
-
-    console.log(data);
-
-    /* Make AJAX HTTP Post Reuqest */
-    /*
-     * If successful, redirect user
-     * If unsuccessful, show message on the page form
-     */
-    var posting = $.post({
-        url: "/signin",
-        data: data,
-        success: function(response) {
-            console.log("POSTed");
-            if (response) {
-                if (response.redirect) {
-                    // Login success
-                    window.location.href = response.redirect;
-                } else {
-                    // Login failed
-                    console.log("Incorrect username or password");
-                    updateform();
-                }
-            }
-        },
-        error: function(data, err) {
-            console.log("POST error");
-        },
-
-        dataType: "json",
-        contentType : "application/json;charset=UTF-8",
-    });
-}
-
-var updateform = function() {
-    // Do something
-    console.log("Updating form.")
-}
-</script>
+<script src="/static/js/auth.js"></script>
 {% endblock %}

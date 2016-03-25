@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+/* Will be provided email and password field names */
+/* email, password are the field names for the POST request*/
+/* emailField, passwordField are the params for the form*/
+
+
+{% block content %}
+    <h1>Login to Joke Review</h1>
+
+    <form id="signupForm" name="signupForm">
+    Email: <input type="text" id="emailField"/>
+    <br/>
+    Password: <input type="password" id="passwordField1" />
+    <br/>
+    Confirm Password: <input type="password" id="passwordField2" />
+    <br/>
+    First Name: <input type="text" id="fnameField" />
+    <br/>
+    Last Name: <input type="text" id="lnameField" />
+    <br/>
+    <input value="Submit" type="button" onclick="signupSubmit()" />
+    </form>
+    <br/>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/signup.js"></script>
+{% endblock %}
