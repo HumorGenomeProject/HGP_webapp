@@ -1,33 +1,67 @@
 import random
+import json
 
+field_title = 'title'
 field_content = 'content'
 field_jokeId = 'jokeId'
+field_categories = 'categories'
 
 
 class Joke(object):
 
-    def __init__(self, content, jokeId=None):
+    def __init__(self, title, content, jokeId=None, categories=None):
 
         self.content = str(content)
 
+        # Need better way of setting unique ID
         if jokeId is None:
             jokeId = random.randint(54321, 16171617)
 
         self.jokeId = jokeId
 
+        if categories is None:
+            categories = []
+
+        self.categories = list(categories)
+
+
+    def add_category(self, category):
+        self.categories.append(category)
+
+    def remove_category(self, out_category):
+        updated_categories = [category for category in self.categories
+            if category is not out_category]
+
+        self.categories = updated_categories
+
+    def set_categories(self, categories):
+        self.categories = categories
 
     def to_json(self):
-        myjoke = dict()
+        '''
+        '''
+        my_joke = dict()
 
-        myjoke[field_content] = self.content
-        myjoke[field_jokeId] = self.jokeId
+        my_joke[field_title] = self.title
+        my_joke[field_content] = self.content
+        my_joke[field_jokeId] = self.jokeId
+        my_joke[field_categories] = self.categories
 
-        return myjoke
+        my_joke_json = json.dumps(my_joke)
+
+        return my_joke_json
 
     @classmethod
-    def from_json(constructor, myuser):
+    def from_json(constructor, my_joke_json):
 
-        content = myuser[field_content]
-        jokeId = myuser[field_jokeId]
+        my_joke = my_joke_json
+        if type(my_joke_json) == str:
+            my_joke = json.loads(my_joke_json)
 
-        return constructor(content, jokeId)
+        title = my_joke[field_title]
+        content = my_joke[field_content]
+        # Using get method in case these fields are null
+        jokeId = my_joke.get(field_jokeId)
+        categories = my_joke.get(field_categories)
+
+        return constructor(title, content, jokeId, categories)

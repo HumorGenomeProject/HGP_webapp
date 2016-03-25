@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-DBNAME = 'scribe'
+DBNAME = 'hgp_webapp'
 
 client = MongoClient('mongodb://localhost:27017/')
 
