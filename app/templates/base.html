@@ -5,10 +5,20 @@
     <title>
         {{ title }}
     </title>
+
+    <link href="/static/css/materialize.min.css" rel="stylesheet" type="text/css"/>
+
 </head>
 <body>
     <div>Joke Review: <a href="/index">Home</a></div>
     <hr>
     {% block content %}{% endblock %}
+
+
+
+    <script src="/static/js/jquery.min.js"></script>
+
+    {% block scripts %}{% endblock %}
+
 </body>
 </html>

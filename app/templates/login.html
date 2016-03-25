@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+/* Will be provided username and password field names */
+/* username, password are the field names for the POST request*/
+/* userField, passwordField are the params for the form*/
+
+
+{% block content %}
+    <h1>Login to Joke Review</h1>
+
+    <form id="loginForm" name="loginForm">
+    <input type="text" id="{{ userField }}"/>
+    <br/>
+    <input type="password" id="{{ passwordField }}" />
+    <br/>
+    <input value="Submit" type="button" onclick="submitform()" />
+    </form>
+    <br/>
+
+    <p>
+    USERNAME: {{ username}} <br/>
+    </p>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var submitform = function() {
+        var username = $('#{{ userField }}')[0].value;
+        var password = $('#{{ passwordField }}')[0].value;
+
+        var formData = {
+            {{ username }}: username,
+            {{ password }}: password
+        };
+
+        var data = JSON.stringify(formData);
+
+        console.log(formData);
+
+        /* Make AJAX HTTP Post Reuqest */
+        var posting = $.post({
+          url: "/signin",
+          data: data,
+          success: function(result) {
+            console.log("SUCCESS");
+            console.log(JSON.stringify(result));
+          },
+          error: function(data, err) {
+            console.log("ERROR");
+            console.log(data);
+            console.log(err);
+          },
+
+          dataType: "json",
+          contentType : "application/json;charset=UTF-8",
+        });
+
+        /*posting.done(function( data ) {
+            console.log("Done - Data");
+            console.log(data);
+            alert(data);
+        });*/
+
+    }
+</script>
+{% endblock %}
