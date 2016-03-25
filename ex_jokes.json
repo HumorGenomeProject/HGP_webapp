@@ -1,0 +1,20 @@
+[
+    {
+        "jokeId": 54321,
+        "title": "Why did the chicken cross the road?",
+        "content": "To get away from this joke.",
+        "categories": [
+            "Animals",
+            "Slapstick"
+        ]
+    },
+    {
+        "jokeId": 54322,
+        "title": "How do you make holy water?",
+        "content": "You boil the hell out of it.",
+        "categories": [
+            "Religion",
+            "Pun"
+        ]
+    }
+]
