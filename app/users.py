@@ -7,10 +7,14 @@ field_email = 'email'
 field_password = 'password'
 field_userId = 'userId'
 field_ratings = 'ratings'
+field_userType = 'userType'
+
+user_regular = 'regular'
+user_privileged = 'privileged'
 
 class User(object):
 
-    def __init__(self, fname, lname, email, password, userId=None, ratings=None):
+    def __init__(self, fname, lname, email, password, userId=None, userType=None, ratings=None):
 
         # If any of the following are None, raise error
         if not all([fname, lname, email, password]):
@@ -21,18 +25,27 @@ class User(object):
         self.email = str(email)
         self.password = str(password)
 
+        # TODO: Use Mongo to determine appropriate userId
         if userId is None:
             userId = random.randint(12345, 998765)
 
         self.userId = int(userId)
+
+        if userType is None:
+            userType = user_regular
+
+        self.userType = userType
 
         if ratings is None:
             ratings = {}
 
         self.ratings = dict(ratings)
 
-
     def get_joke_rating(self, jokeId):
+        '''
+        If a rating is found for a given jokeId, returns the rating.
+        Otherwise, returns a -1 to indicate no rating.
+        '''
         rating = self.ratings.get(jokeId)
         if rating is None:
             rating = -1
@@ -43,6 +56,9 @@ class User(object):
     def set_joke_rating(self, jokeId, rating):
         self.ratings[jokeId] = rating
 
+
+    def is_privileged(self):
+        return self.userType == user_privileged
 
     def find_all_rated_jokes(self):
         jokeIds = list(self.ratings.keys())
@@ -60,6 +76,7 @@ class User(object):
         my_user[field_email] = self.email
         my_user[field_password] = self.password
         my_user[field_userId] = self.userId
+        my_user[field_userType] = self.userType
         my_user[field_ratings] = self.ratings
 
         my_user_json = json.dumps(my_user)
@@ -82,6 +99,7 @@ class User(object):
 
         # Using get method in case these fields are null
         userId = my_user.get(field_userId)
+        userType = my_user.get(field_userType)
         ratings = my_user.get(field_ratings)
 
-        return constructor(fname, lname, email, password, userId, ratings)
+        return constructor(fname, lname, email, password, userId, userType, ratings)

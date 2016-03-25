@@ -11,9 +11,11 @@ class Joke(object):
 
     def __init__(self, title, content, jokeId=None, categories=None):
 
+
+        self.title = str(title)
         self.content = str(content)
 
-        # Need better way of setting unique ID
+        # TODO: Use Mongo to determine appropriate jokeId
         if jokeId is None:
             jokeId = random.randint(54321, 16171617)
 
