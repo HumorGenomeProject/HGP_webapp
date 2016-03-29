@@ -49,9 +49,7 @@ class Joke(object):
         my_joke[field_jokeId] = self.jokeId
         my_joke[field_categories] = self.categories
 
-        my_joke_json = json.dumps(my_joke)
-
-        return my_joke_json
+        return my_joke
 
     @classmethod
     def from_json(constructor, my_joke_json):

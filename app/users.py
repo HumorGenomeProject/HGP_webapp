@@ -14,7 +14,7 @@ user_privileged = 'privileged'
 
 class User(object):
 
-    def __init__(self, fname, lname, email, password, userId=None, userType=None, ratings=None):
+    def __init__(self, email, password, fname, lname, userId=None, userType=None, ratings=None):
 
         # If any of the following are None, raise error
         if not all([fname, lname, email, password]):
@@ -31,10 +31,10 @@ class User(object):
 
         self.userId = int(userId)
 
-        if userType is None:
+        if userType is None or userType != user_privileged:
             userType = user_regular
 
-        self.userType = userType
+        self.userType = str(userType)
 
         if ratings is None:
             ratings = {}
@@ -79,8 +79,7 @@ class User(object):
         my_user[field_userType] = self.userType
         my_user[field_ratings] = self.ratings
 
-        my_user_json = json.dumps(my_user)
-        return my_user_json
+        return my_user
 
     @classmethod
     def from_json(constructor, my_user_json):
@@ -102,4 +101,9 @@ class User(object):
         userType = my_user.get(field_userType)
         ratings = my_user.get(field_ratings)
 
-        return constructor(fname, lname, email, password, userId, userType, ratings)
+        return constructor(email, password, fname, lname, userId, userType, ratings)
+
+
+    def __str__(self):
+        contents = "{} {} : {}".format(self.fname, self.lname, self.email)
+        return contents

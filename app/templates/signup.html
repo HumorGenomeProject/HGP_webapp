@@ -6,9 +6,9 @@
 
 
 {% block content %}
-    <h1>Login to Joke Review</h1>
+<h1>Login to Joke Review</h1>
 
-    <form id="signupForm" name="signupForm">
+<form id="signupForm" name="signupForm">
     Email: <input type="text" id="emailField"/>
     <br/>
     Password: <input type="password" id="passwordField1" />
@@ -19,9 +19,25 @@
     <br/>
     Last Name: <input type="text" id="lnameField" />
     <br/>
+
+    Type of User:
+
+    <p>
+        <input class="with-gap" name="userType" type="radio" id="regularType" />
+        <label for="regularType">Regular</label>
+    </p>
+    <p>
+        <input class="with-gap" name="userType" type="radio" id="privilegedType" />
+        <label for="privilegedType">Privileged</label>
+    </p>
+
+
     <input value="Submit" type="button" onclick="signupSubmit()" />
-    </form>
     <br/>
+
+
+</form>
+<br/>
 
 {% endblock %}
 
