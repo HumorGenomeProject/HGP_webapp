@@ -1,13 +1,14 @@
 from app import app
-from flask import render_template, request, url_for
+from flask import render_template, request, url_for, session, redirect
 from jokes import Joke
 from users import User
 import json
 import logging
 from crypt import crypt
 from secrets import SECRET_SALT, SECRET_SESSION
-
 import models
+
+app.secret_key = SECRET_SESSION
 
 # Names for keys from JSON received and sent
 key_email = 'email'
@@ -25,7 +26,6 @@ msg_success = 'Success'
 
 @app.route('/')
 @app.route('/index')
-@app.route('/index/<title>')
 def index(title='HGP Home'):
     jokesList = [
     Joke("Just changed my Facebook name to \'No one\' so when I see stupid posts ",
@@ -35,9 +35,17 @@ def index(title='HGP Home'):
     ]
     return render_template('index.html',title=title, jokes=jokesList)
 
+@app.route('/about')
+def about_page():
+    return index('About Us')
+
 
 @app.route('/login')
 def login():
+
+    # If already logged in, redirect to view jokes
+    if session[key_email]:
+        return redirect(url_for('view_jokes'))
     return render_template('login.html')
 
 
@@ -53,12 +61,15 @@ def signin():
     user = models.user_by_credentials(email, password_hashed)
 
     if user:
-        redirectUrl = url_for('index')
+
+        # TODO: Add session for logged in user
+        session[key_email] = user.email
+        redirectUrl = url_for('view_jokes')
+        print session
         jsonResponse = json.dumps({
             key_redirect: redirectUrl,
             key_authmessage: msg_success
         })
-        # TODO: Add session for logged in user
         return jsonResponse
 
     else:
@@ -70,15 +81,20 @@ def signin():
 
 @app.route('/signup', methods=['GET'])
 def signup():
+
+    # If already logged in, redirect to view jokes
+    if session[key_email]:
+        return redirect(url_for('view_jokes'))
+
     return render_template('signup.html')
 
 
 @app.route('/register', methods=['POST'])
 def register():
     content = request.get_json(force=True, silent=True)
-    email = content[key_email]
+    email = content.get(key_email)
 
-    if models.email_available(email):
+    if email and models.email_available(email):
         # Dont even look at the original password. Hash with salt immediately
         password_hashed = crypt(content[key_password], SECRET_SALT)
         fname = content['fname']
@@ -86,11 +102,13 @@ def register():
         userType = content['userType']
 
 
-        newUser = User(email, password_hashed, fname, lname, userType=userType)
-        models.update_user(newUser)
+        new_user = User(email, password_hashed, fname, lname, userType=userType)
+        models.update_user(new_user)
 
-        welcome_msg = "HGP - {} {}".format(newUser.fname, newUser.lname)
-        redirectUrl = url_for('index', title=welcome_msg)
+        # TODO: Add session for logged in user
+        session[key_email] = new_user.email
+        redirectUrl = url_for('view_jokes')
+        print session
 
         jsonResponse = json.dumps({
             key_authmessage: msg_success,
@@ -107,3 +125,27 @@ def register():
         })
 
         return jsonResponse
+
+@app.route('/jokes')
+@app.route('/jokes/<int:jokeId>')
+@app.route('/jokes/categories/<category>')
+def view_jokes(jokeId=None, category=None):
+
+    # If not logged in, redirect to login page
+    if not session[key_email]:
+        return redirect(url_for('login'))
+
+    the_joke = None
+    if jokeId:
+        the_joke = models.joke_by_jokeId(jokeId)
+    elif category:
+        the_joke = models.joke_by_category(category)
+    else:
+        the_joke = models.random_joke()
+
+    title = the_joke.title
+    content = the_joke.content
+    categories = the_joke.categories
+
+    jsonResponse = json.dumps(the_joke.to_json())
+    return jsonResponse

@@ -4,8 +4,8 @@
         "title": "Why did the chicken cross the road?",
         "content": "To get away from this joke.",
         "categories": [
-            "Animals",
-            "Slapstick"
+            "animals",
+            "slapstick"
         ]
     },
     {
@@ -13,8 +13,8 @@
         "title": "How do you make holy water?",
         "content": "You boil the hell out of it.",
         "categories": [
-            "Religion",
-            "Pun"
+            "religion",
+            "pun"
         ]
     }
 ]

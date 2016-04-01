@@ -2,6 +2,7 @@ from dbco import db
 from users import field_userId, field_email, field_password, User
 from jokes import field_jokeId, field_categories, Joke
 import json
+import random
 
 def user_by_userId(userId):
     userJson = db.users.findOne({ field_userId: userId})
@@ -53,19 +54,42 @@ def joke_by_jokeId(jokeId):
         return None
 
 
-def joke_by_categories(categories):
+def jokes_by_categories(categories, limit=5):
     if type(categories) != list:
         categories = list(categories)
-    jokesJson = db.jokes.find({field_categories: {'$in': categories}})
+        categories = [str(category).lower() for category in categories]
+    jokesJson = db.jokes.find({field_categories: {'$in': categories}}).limit(limit)
     return map(Joke.from_json, jokesJson)
 
 
 def joke_by_category(category):
-    jokes = joke_by_categories([category])
-    if jokes:
-        return jokes[0]
-    else:
-        return None
+    category = str(category).lower()
+    count = db.jokes.count()
+    rand_offset = random.randrange(count)
+
+    jokeJson = db.jokes.find({
+        field_categories: { '$in': [category] }
+    }).limit(1).skip(rand_offset)
+
+    jokesJson = list(jokeJson)
+    if jokesJson:
+        the_joke = Joke.from_json(jokesJson[0])
+        return the_joke
+
+    return None
+
+def random_joke():
+    count = db.jokes.count()
+    rand_offset = random.randrange(count)
+    jokeJson = db.jokes.find({}).limit(1).skip(rand_offset)
+
+    jokesJson = list(jokeJson)
+    if jokesJson:
+        the_joke = Joke.from_json(jokesJson[0])
+        return the_joke
+
+    return None
+
 
 def update_user(some_user):
     if type(some_user) == User:

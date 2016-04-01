@@ -19,7 +19,7 @@ class Joke(object):
         if jokeId is None:
             jokeId = random.randint(54321, 16171617)
 
-        self.jokeId = jokeId
+        self.jokeId = int(jokeId)
 
         if categories is None:
             categories = []

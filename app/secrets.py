@@ -23,7 +23,7 @@ if path.isfile(FILENAME):
 else:
     # Otherwise, create new secrets and store to file
     # Note: This will only be done once, ever. Once the app runs,
-    # this file should not be tampered with
+    # the file should not be tampered with
 
     # This is a crypto hashing library
     sha256 = hashlib.sha256()
@@ -44,9 +44,6 @@ else:
     the_secrets[field_salt] = SECRET_SALT
     the_secrets[field_session] = SECRET_SESSION
 
-    # Lastly, write these secrets to the hidden file
+    # Write these secrets to the hidden file
     with open(FILENAME, 'w') as outfile:
         json.dump(the_secrets, outfile, indent=4)
-
-print SECRET_SALT
-print SECRET_SESSION
