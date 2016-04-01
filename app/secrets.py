@@ -1,12 +1,52 @@
+import os
+from os import path
+import random
+import hashlib
+import json
 
-# This file stores secrets used for cryptography. Do not share these with anyone anywhere
+# This is a hidden file stored locally. Will not go on GitHub or ANYWHERE
+FILENAME = '.secrets.json'
 
-# To generate new secrets, run the following in a python shell for each
-# import hashlib
-# sha256 = hashlib.sha256()
-# sha256.update('Put some random unique long hard to guess text here')
-# secret = sha256.hexdigest()  # This is your secret to copy here
+SECRET_SALT = None
+SECRET_SESSION = None
 
-SECRET_SALT = 'f52cc8c9235cfc33d23e6eb3c7163901440804ebcf7ff83896150f841c8057bd'
+field_salt = 'SALT'
+field_session = 'SESSION'
 
-SECRET_SESSION = '04f38e9a5368681573f339d23a2ab1af4295054dd3265a84ffc193fd0611a046'
+if path.isfile(FILENAME):
+    # Just read the file and get secrets
+    with open(FILENAME, 'r') as infile:
+        the_secrets = json.load(infile)
+        SECRET_SALT = the_secrets.get(field_salt)
+        SECRET_SESSION = the_secrets.get(field_session)
+
+else:
+    # Otherwise, create new secrets and store to file
+    # Note: This will only be done once, ever. Once the app runs,
+    # this file should not be tampered with
+
+    # This is a crypto hashing library
+    sha256 = hashlib.sha256()
+
+    some_random_text = str(int(random.randrange(1234567, 999999999)))
+    sha256.update(some_random_text)
+    # Let the hex string from the crypto library be our secret salt
+    SECRET_SALT = sha256.hexdigest()
+
+    # Make a new sha256 for session secret
+    sha256 = hashlib.sha256()
+
+    some_random_text = str(int(random.randrange(1234567, 999999999)))
+    sha256.update(some_random_text)
+    SECRET_SESSION = sha256.hexdigest()
+
+    the_secrets = {}
+    the_secrets[field_salt] = SECRET_SALT
+    the_secrets[field_session] = SECRET_SESSION
+
+    # Lastly, write these secrets to the hidden file
+    with open(FILENAME, 'w') as outfile:
+        json.dump(the_secrets, outfile, indent=4)
+
+print SECRET_SALT
+print SECRET_SESSION

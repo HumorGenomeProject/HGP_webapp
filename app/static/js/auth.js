@@ -9,7 +9,7 @@ $(function() {
         $(this).find('input').keypress(function(e) {
             // Enter pressed?
             if(e.which == 10 || e.which == 13) {
-                submitform();
+                loginSubmit();
             }
         });
     });
@@ -45,6 +45,7 @@ var loginSubmit = function() {
                 } else {
                     // Login failed
                     console.log("Incorrect username or password");
+                    alert("Incorrect username or password");
                     updateform();
                 }
             }
