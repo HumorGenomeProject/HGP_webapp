@@ -1,11 +1,11 @@
 
 
-/* Script for signing into web app using an email and password */
+/* Script for signing up as a user */
 /* @author Osama Sakhi */
 
 /* Used to allow enter button to submit form when inside the form */
 $(function() {
-    $('#loginForm').each(function() {
+    $('#signupForm').each(function() {
         $(this).find('input').keypress(function(e) {
             // Enter pressed?
             if(e.which == 10 || e.which == 13) {

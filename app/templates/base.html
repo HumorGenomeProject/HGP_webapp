@@ -6,20 +6,19 @@
         {{ title }}
     </title>
 
+    <!-- Stylesheets go here -->
     <link href="/static/css/materialize.min.css" rel="stylesheet" type="text/css"/>
     {% block stylesheets %}{% endblock %}
 
 </head>
 <body>
-    <!-- Navbar here -->
+    
     <div>Joke Review: <a href="/index">Home</a></div>
-
     {% block content %}{% endblock %}
 
 
     <!-- Scripts must be loaded at the end of body -->
-    <script src="/static/js/jquery.min.js"></script>
-
+    <script type="text/javascript" src="{{url_for('static', filename="js/jquery.min.js")}}"></script>
     {% block scripts %}{% endblock %}
 
 </body>

@@ -1,10 +1,5 @@
 {% extends "base.html" %}
 
-/* Will be provided email and password field names */
-/* email, password are the field names for the POST request*/
-/* emailField, passwordField are the params for the form*/
-
-
 {% block content %}
     <h1>Login to Joke Review</h1>
 
@@ -20,5 +15,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/auth.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename="js/auth.js")}}"></script>
+<script type="text/javascript">
+
+</script>
 {% endblock %}

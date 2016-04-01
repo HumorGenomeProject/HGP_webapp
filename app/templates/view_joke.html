@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+/* Will be provided email and password field names */
+/* */
+/* email, password are the field names for the POST request*/
+/* emailField, passwordField are the params for the form*/
+
+
+{% block content %}
+
+<h3>Here's a Joke</h3>
+
+<form id="jokeForm" name="jokeForm">
+
+    <label for="titleField">Title</label> <br />
+    <input id="titleField" type="text"  value="{{ title }}"/>
+
+    <label for="contentField">Content</label> <br />
+    <textarea id="contentField" class="materialize-textarea">{{content}}</textarea>
+
+    <input value="Submit" type="button" onclick="submitJoke()" />
+    <br/>
+
+</form>
+<br/>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{{url_for('static', filename="js/view_joke.js")}}"></script>
+{% endblock %}

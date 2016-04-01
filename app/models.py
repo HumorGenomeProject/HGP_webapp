@@ -30,8 +30,8 @@ def user_by_credentials(email, password):
 def user_by_email(email):
     userJson = db.users.find_one({ 'email':  email})
     if userJson:
-        print userJson
-        return userJson
+        user = User.from_json(userJson)
+        return user
     else:
         return None
 

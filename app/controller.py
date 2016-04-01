@@ -5,10 +5,9 @@ from users import User
 import json
 import logging
 from crypt import crypt
-from secrets import SECRET_SALT, SECRET_SESSION
 import models
-
-app.secret_key = SECRET_SESSION
+from secrets import SECRET_SALT, SECRET_SESSION
+from datetime import timedelta
 
 # Names for keys from JSON received and sent
 key_email = 'email'
@@ -24,6 +23,12 @@ msg_fail = 'Failure'
 msg_success = 'Success'
 
 
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(hours=2)
+
+
 @app.route('/')
 @app.route('/index')
 def index(title='HGP Home'):
@@ -35,6 +40,7 @@ def index(title='HGP Home'):
     ]
     return render_template('index.html',title=title, jokes=jokesList)
 
+
 @app.route('/about')
 def about_page():
     return index('About Us')
@@ -44,8 +50,8 @@ def about_page():
 def login():
 
     # If already logged in, redirect to view jokes
-    if session[key_email]:
-        return redirect(url_for('view_jokes'))
+    if session.get(key_email):
+        return redirect(url_for('view_joke'))
     return render_template('login.html')
 
 
@@ -64,7 +70,7 @@ def signin():
 
         # TODO: Add session for logged in user
         session[key_email] = user.email
-        redirectUrl = url_for('view_jokes')
+        redirectUrl = url_for('view_joke')
         print session
         jsonResponse = json.dumps({
             key_redirect: redirectUrl,
@@ -79,12 +85,13 @@ def signin():
         })
         return jsonResponse
 
+
 @app.route('/signup', methods=['GET'])
 def signup():
 
     # If already logged in, redirect to view jokes
-    if session[key_email]:
-        return redirect(url_for('view_jokes'))
+    if session.get(key_email):
+        return redirect(url_for('view_joke'))
 
     return render_template('signup.html')
 
@@ -107,7 +114,7 @@ def register():
 
         # TODO: Add session for logged in user
         session[key_email] = new_user.email
-        redirectUrl = url_for('view_jokes')
+        redirectUrl = url_for('view_joke')
         print session
 
         jsonResponse = json.dumps({
@@ -126,13 +133,14 @@ def register():
 
         return jsonResponse
 
+
 @app.route('/jokes')
 @app.route('/jokes/<int:jokeId>')
 @app.route('/jokes/categories/<category>')
-def view_jokes(jokeId=None, category=None):
+def view_joke(jokeId=None, category=None):
 
     # If not logged in, redirect to login page
-    if not session[key_email]:
+    if not session.get(key_email):
         return redirect(url_for('login'))
 
     the_joke = None
@@ -146,6 +154,14 @@ def view_jokes(jokeId=None, category=None):
     title = the_joke.title
     content = the_joke.content
     categories = the_joke.categories
+    jokeId = the_joke.jokeId
+    privileged = False
 
-    jsonResponse = json.dumps(the_joke.to_json())
-    return jsonResponse
+
+    the_user = models.user_by_email(session.get(key_email))
+    if the_user:
+        privileged = the_user.is_privileged()
+
+
+    return render_template('view_joke.html', title=title, content=content,
+        privileged=privileged, jokeId=jokeId)

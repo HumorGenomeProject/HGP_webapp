@@ -6,7 +6,7 @@
 
 
 {% block content %}
-<h1>Login to Joke Review</h1>
+<h1>Signup for the Humor Genome Project</h1>
 
 <form id="signupForm" name="signupForm">
     Email: <input type="text" id="emailField"/>
@@ -42,5 +42,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/signup.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename="js/signup.js")}}"></script>
 {% endblock %}
