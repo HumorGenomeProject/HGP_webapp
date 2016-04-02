@@ -20,10 +20,10 @@ class User(object):
         if not all([fname, lname, email, password]):
                 raise ValueError
 
-        self.fname = str(fname)
-        self.lname = str(lname)
-        self.email = str(email)
-        self.password = str(password)
+        self.fname = unicode(fname)
+        self.lname = unicode(lname)
+        self.email = unicode(email)
+        self.password = unicode(password)
 
         # TODO: Use Mongo to determine appropriate userId
         if userId is None:
@@ -34,7 +34,7 @@ class User(object):
         if userType is None or userType != user_privileged:
             userType = user_regular
 
-        self.userType = str(userType)
+        self.userType = unicode(userType)
 
         if ratings is None:
             ratings = {}
@@ -87,7 +87,7 @@ class User(object):
         Given a JSON representation of a User object, this function will deserialize it into a proper python User object.
         '''
         my_user = my_user_json
-        if type(my_user_json) == str:
+        if type(my_user_json) == str or type(my_user_json) == unicode:
             my_user = json.loads(my_user_json)
 
 

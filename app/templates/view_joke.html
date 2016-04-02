@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 
-/* Will be provided email and password field names */
-/* */
-/* email, password are the field names for the POST request*/
-/* emailField, passwordField are the params for the form*/
-
+/* Will be provided joke_title, joke_content, jokeId, and privileged as vars */
 
 {% block content %}
 
@@ -12,11 +8,23 @@
 
 <form id="jokeForm" name="jokeForm">
 
+    {% if privileged: %}
+    <!-- User is privileged. Allow to modify contents and categories -->
     <label for="titleField">Title</label> <br />
-    <input id="titleField" type="text"  value="{{ title }}"/>
+    <textarea id="titleField" class="materialize-textarea"> {{ joke_title }} </textarea>
 
     <label for="contentField">Content</label> <br />
-    <textarea id="contentField" class="materialize-textarea">{{content}}</textarea>
+    <textarea id="contentField" class="materialize-textarea">{{ joke_content }}</textarea>
+
+    {% else : %}
+    <!-- User is not privileged. Can only view joke -->
+    <strong>
+        {{ joke_title }}
+    </strong>
+    <p>
+        {{ joke_content }}
+    </p>
+    {% endif %}
 
     <input value="Submit" type="button" onclick="submitJoke()" />
     <br/>

@@ -12,8 +12,8 @@ class Joke(object):
     def __init__(self, title, content, jokeId=None, categories=None):
 
 
-        self.title = str(title)
-        self.content = str(content)
+        self.title = unicode(title)
+        self.content = unicode(content)
 
         # TODO: Use Mongo to determine appropriate jokeId
         if jokeId is None:
@@ -55,7 +55,7 @@ class Joke(object):
     def from_json(constructor, my_joke_json):
 
         my_joke = my_joke_json
-        if type(my_joke_json) == str:
+        if type(my_joke_json) == str or type(my_joke_json) == unicode:
             my_joke = json.loads(my_joke_json)
 
         title = my_joke[field_title]

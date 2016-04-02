@@ -102,3 +102,7 @@ def update_joke(some_joke):
         jokeJson = some_joke.to_json()
         dbupdate = db.jokes.update(jokeJson, {'$set': jokeJson}, upsert=True)
         print dbupdate
+
+def remove_joke(jokeId):
+    dbupdate = db.jokes.delete_one({ field_jokeId: jokeId })
+    print dbupdate

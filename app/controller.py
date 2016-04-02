@@ -14,7 +14,9 @@ key_email = 'email'
 key_password = 'password'
 
 key_redirect = 'redirect'
-key_authmessage = 'authmessage'
+key_message = 'message'
+
+key_jokeId = 'jokeId'
 
 LOGIN_FAIL = 401
 LOGIN_SUCCESS = 200
@@ -30,7 +32,7 @@ def make_session_permanent():
 
 
 @app.route('/')
-@app.route('/index')
+@app.route('/index/')
 def index(title='HGP Home'):
     jokesList = [
     Joke("Just changed my Facebook name to \'No one\' so when I see stupid posts ",
@@ -41,12 +43,12 @@ def index(title='HGP Home'):
     return render_template('index.html',title=title, jokes=jokesList)
 
 
-@app.route('/about')
+@app.route('/about/')
 def about_page():
     return index('About Us')
 
 
-@app.route('/login')
+@app.route('/login/')
 def login():
 
     # If already logged in, redirect to view jokes
@@ -74,13 +76,13 @@ def signin():
         print session
         jsonResponse = json.dumps({
             key_redirect: redirectUrl,
-            key_authmessage: msg_success
+            key_message: msg_success
         })
         return jsonResponse
 
     else:
         jsonResponse = json.dumps({
-            key_authmessage: msg_fail,
+            key_message: msg_fail,
             key_redirect: None
         })
         return jsonResponse
@@ -118,7 +120,7 @@ def register():
         print session
 
         jsonResponse = json.dumps({
-            key_authmessage: msg_success,
+            key_message: msg_success,
             key_redirect: redirectUrl
         })
 
@@ -126,7 +128,7 @@ def register():
 
     else:
         jsonResponse = json.dumps({
-            key_authmessage: msg_fail,
+            key_message: msg_fail,
             key_redirect: None,
             'email_unavailable': True
         })
@@ -163,5 +165,43 @@ def view_joke(jokeId=None, category=None):
         privileged = the_user.is_privileged()
 
 
-    return render_template('view_joke.html', title=title, content=content,
+    return render_template('view_joke.html', joke_title=title, joke_content=content,
         privileged=privileged, jokeId=jokeId)
+
+@app.route('/update_joke', methods=['POST'])
+def update_joke():
+    # TODO: implement
+    content = request.get_json(force=True, silent=True)
+    return '{}'
+
+@app.route('/delete_joke', methods=['POST'])
+def delete_joke():
+    '''
+    If jokeId is provided, the given joke is deleted from the database and user is
+    redirected to a new joke.
+    Otherwise, no jokeId is provided, a failure message is returned, with no redirect URL.
+    '''
+    if not session.get(key_email):
+        return redirect(url_for('login'))
+
+    content = request.get_json(force=True, silent=True)
+    jokeId = int(content.get(key_jokeId))
+
+    if jokeId:
+
+        # TODO: ensure remove_joke actually works
+        models.remove_joke(jokeId)
+        jsonResponse = json.dumps( {
+            key_jokeId: jokeId,
+            key_message: msg_success,
+            key_redirect: url_for('view_joke')
+        })
+        return jsonResponse
+
+    else:
+        jsonResponse = json.dumps( {
+            key_message: msg_fail,
+            key_redirect: None,
+        })
+
+        return jsonResponse
