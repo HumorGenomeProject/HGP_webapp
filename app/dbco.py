@@ -1,7 +1,8 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 
-DBNAME = 'hgp_webapp'
+WEBAPP_DBNAME = 'hgp_webapp'
 
-client = MongoClient('mongodb://localhost:27017/')
-
-db = client[DBNAME]
+# TODO: Move this to a config file.
+localConnection = 'mongodb://127.0.0.1:27017/'
+client = MongoClient(localConnection)
+db = client[WEBAPP_DBNAME]

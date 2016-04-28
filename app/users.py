@@ -1,16 +1,8 @@
 import random
 import json
 
-field_fname = 'fname'
-field_lname = 'lname'
-field_email = 'email'
-field_password = 'password'
-field_userId = 'userId'
-field_ratings = 'ratings'
-field_userType = 'userType'
-
-user_regular = 'regular'
-user_privileged = 'privileged'
+from field_names import field_fname, field_lname, field_email, field_password, field_userId, field_ratings, field_userType
+from field_names import user_regular, user_privileged
 
 class User(object):
 

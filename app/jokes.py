@@ -1,11 +1,7 @@
 import random
 import json
 
-field_title = 'title'
-field_content = 'content'
-field_jokeId = 'jokeId'
-field_categories = 'categories'
-
+from field_names import field_title, field_content, field_jokeId, field_categories
 
 class Joke(object):
 
@@ -18,6 +14,7 @@ class Joke(object):
         # TODO: Use Mongo to determine appropriate jokeId
         if jokeId is None:
             jokeId = random.randint(54321, 16171617)
+            # jokeId = models.generate_joke_id()
 
         self.jokeId = int(jokeId)
 
