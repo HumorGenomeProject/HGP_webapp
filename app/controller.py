@@ -171,8 +171,12 @@ def view_joke(jokeId=None, category=None):
 @app.route('/update_joke', methods=['POST'])
 def update_joke():
     # TODO: implement
-    content = request.get_json(force=True, silent=True)
-    return '{}'
+    joke = request.get_json(force=True, silent=True)
+    print joke
+    if 'jokeId' not in joke or 'title' not in joke or 'content' not in joke:
+        return json.dumps({'msg': 'Joke update failed'})
+
+    return {'redirect': url_for('view_joke')}
 
 @app.route('/delete_joke', methods=['POST'])
 def delete_joke():
