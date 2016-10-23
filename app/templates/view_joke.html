@@ -16,7 +16,7 @@
     <label for="contentField">Content</label> <br />
     <textarea id="contentField" class="materialize-textarea">{{ joke_content }}</textarea>
 
-    {% else : %}
+    {% else: %}
     <!-- User is not privileged. Can only view joke -->
     <strong>
         {{ joke_title }}
@@ -26,8 +26,18 @@
     </p>
     {% endif %}
 
+    <!--TODO: Add a rating bar here-->
+    <br><br>
+    <strong>Rating: Rate from 1 to 5</strong> <br>
+    <input type="number" value="5" id="rating" width="40px"/>
+
+    <br><br>
     <input value="Submit" type="button" onclick="submitJoke()" />
-    <br/>
+
+    {% if privileged: %}
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input value="Delete" type="button" onclick="deleteJoke()" />
+    {% endif %}
 
 </form>
 <br/>
@@ -36,5 +46,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{{url_for('static', filename="js/view_joke.js")}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='js/view_joke.js')}}"></script>
+<script type="text/javascript">
+    var jokeId = "{{ jokeId }}";
+</script>
 {% endblock %}

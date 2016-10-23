@@ -26,11 +26,40 @@ var submitJoke = function() {
             }
         },
         error: function(data, err) {
-            console.log("An error occurred updating this joke.");
+            console.log("An error occurred while updating this joke.");
         },
 
         dataType: "json",
         contentType : "application/json;charset=UTF-8",
     });
-    console.log("Done");
+}
+
+var deleteJoke = function() {
+    var formdata = {
+        'jokeId': jokeId
+    };
+    var data = JSON.stringify(formdata);
+
+    var posting = $.post({
+        url: "/delete_joke",
+        data: data,
+        success: function(response) {
+            console.log("Submitted");
+            if (response) {
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                } else if (response.msg) {
+                    console.log("Msg received: " + response.msg)
+                } else {
+                    console.log("Joke was successfully deleted.")
+                }
+            }
+        },
+        error: function(data, err) {
+            console.log("An error occurred while deleting this joke.");
+        },
+
+        dataType: "json",
+        contentType : "application/json;charset=UTF-8",
+    });
 }

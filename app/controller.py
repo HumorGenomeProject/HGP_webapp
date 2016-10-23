@@ -8,10 +8,12 @@ from crypt import crypt
 import models
 from secrets import SECRET_SALT, SECRET_SESSION
 from datetime import timedelta
+from field_names import user_privileged
 
 # Names for keys from JSON received and sent
 key_email = 'email'
 key_password = 'password'
+key_userType = 'userType'
 
 key_redirect = 'redirect'
 key_message = 'message'
@@ -33,28 +35,63 @@ def make_session_permanent():
 
 @app.route('/')
 @app.route('/index/')
-def index(title='HGP Home'):
-    jokesList = [
-    Joke("Just changed my Facebook name to \'No one\' so when I see stupid posts ",
-        "I can click like and it will say \'No one\' likes this'.", jokeId=1),
-    Joke("What's the difference between snowmen and snowladies?","Snowballs",jokeId=2),
-    Joke("How do you make holy water?", "You boil the hell out of it",jokeId=3)
-    ]
-    return render_template('index.html',title=title, jokes=jokesList)
+def index():
+    """
+    Renders the Home page.
+    """
+    return render_template('index.html', title="Welcome to the Humor Genome Project")
 
 
 @app.route('/about/')
-def about_page():
-    return index('About Us')
+def about_us():
+    """
+    Renders the About Us page.
+    """
+    return render_template('index.html', title="About Us")
 
+@app.route('/account/')
+def account():
+    """
+    Renders the My Account page. If there is no logged in user, redirects to
+    Login page.
+    """
+    # If not logged in, redirect to login page
+    if not session.get(key_email):
+        return redirect(url_for('index'))
+
+    return render_template('index.html', title="My Account")
 
 @app.route('/login/')
 def login():
-
+    """
+    Renders the Login page. If user already logged in, redirects to
+    View Joke page.
+    """
     # If already logged in, redirect to view jokes
     if session.get(key_email):
         return redirect(url_for('view_joke'))
     return render_template('login.html')
+
+@app.route('/logout', methods=["POST"])
+def logout():
+    """
+    Logs a user out of their session.
+    """
+    # TODO: Fix
+    response_json = {}
+    if session.get(key_email):
+        print type(session)
+        print str(session)
+        session[key_email] = None
+        session[key_userType] = None
+
+        response_json['redirect'] = url_for('index')
+        response_json['msg'] = 'Logout successful'
+    else:
+        response_json['redirect'] = None
+        response_json['msg'] = 'Logout failed'
+
+    return json.dumps(response_json)
 
 
 @app.route('/signin', methods=['POST'])
@@ -72,8 +109,9 @@ def signin():
 
         # TODO: Add session for logged in user
         session[key_email] = user.email
+        session[key_userType] = user.userType
         redirectUrl = url_for('view_joke')
-        print session
+
         jsonResponse = json.dumps({
             key_redirect: redirectUrl,
             key_message: msg_success
@@ -116,8 +154,8 @@ def register():
 
         # TODO: Add session for logged in user
         session[key_email] = new_user.email
+        session[key_userType] = new_user.userType
         redirectUrl = url_for('view_joke')
-        print session
 
         jsonResponse = json.dumps({
             key_message: msg_success,
@@ -136,9 +174,9 @@ def register():
         return jsonResponse
 
 
-@app.route('/jokes')
-@app.route('/jokes/<int:jokeId>')
-@app.route('/jokes/categories/<category>')
+@app.route('/view_joke')
+@app.route('/view_joke/<int:jokeId>')
+@app.route('/view_joke/categories/<category>')
 def view_joke(jokeId=None, category=None):
 
     # If not logged in, redirect to login page
@@ -157,13 +195,7 @@ def view_joke(jokeId=None, category=None):
     content = the_joke.content
     categories = the_joke.categories
     jokeId = the_joke.jokeId
-    privileged = False
-
-
-    the_user = models.user_by_email(session.get(key_email))
-    if the_user:
-        privileged = the_user.is_privileged()
-
+    privileged = session.get(key_userType) == user_privileged
 
     return render_template('view_joke.html', joke_title=title, joke_content=content,
         privileged=privileged, jokeId=jokeId)
@@ -189,14 +221,19 @@ def delete_joke():
         return redirect(url_for('login'))
 
     content = request.get_json(force=True, silent=True)
-    jokeId = int(content.get(key_jokeId))
 
-    if jokeId:
+    try:
+        jokeId = int(content.get(key_jokeId))
+    except ValueError, e:
+        print "Failed to convert jokeId to int: {}".format(e)
+        jokeId = None
+
+    # To delete, must have jokeId and user must be privileged
+    if jokeId and session.get(key_userType) == user_privileged:
 
         # TODO: ensure remove_joke actually works
-        models.remove_joke(jokeId)
+        # models.remove_joke(jokeId)
         jsonResponse = json.dumps( {
-            key_jokeId: jokeId,
             key_message: msg_success,
             key_redirect: url_for('view_joke')
         })
