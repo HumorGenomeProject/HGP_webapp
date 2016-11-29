@@ -1,7 +1,4 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Welcome to Joke Review</h1>
-{% for joke in jokes %}
-<div><p>"{{joke.title}}" - ({{joke.content}})</p></div>
-    {% endfor %}
+    <h1>{{ title }} </h1>
 {% endblock %}

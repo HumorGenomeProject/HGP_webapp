@@ -16,7 +16,7 @@ pip install flask pymongo
 
 ## Running the App
 ```
-python run.py
+python server.py
 ```
 
 
@@ -39,70 +39,4 @@ In one terminal:
 mongod  # This sets up the MongoDB server
 ```
 
-While that runs, in another terminal:
-```bash
-mongo
-use hgp_webapp
-# The content we will insert here is taken from ex_jokes.json
-# However, you can copy everything here directly over
-db.jokes.insert(
-[
-    {
-        "jokeId": 54321,
-        "title": "Why did the chicken cross the road?",
-        "content": "To get away from this joke.",
-        "categories": [
-            "Animals",
-            "Slapstick"
-        ]
-    },
-    {
-        "jokeId": 54322,
-        "title": "How do you make holy water?",
-        "content": "You boil the hell out of it.",
-        "categories": [
-            "Religion",
-            "Pun"
-        ]
-    }
-]
-)
-# The content we will insert here is taken from ex_users.json
-db.users.insert(
-[
-    {
-        "fname": "Osama",
-        "lname": "Sakhi",
-        "email": "derp@example.com",
-        "password": "gojackets",
-        "userId": 12345,
-        "ratings": {
-            "54321": 3,
-            "54322": 5
-        }
-    },
-    {
-        "fname": "Eric",
-        "lname": "S",
-        "email": "dude@example.com",
-        "password": "hackers",
-        "userId": 12346,
-        "ratings": {
-            "54321": 4,
-            "54322": 2
-        }
-    },
-    {
-        "fname": "Matt",
-        "lname": "I",
-        "email": "bro@example.com",
-        "password": "stuff",
-        "userId": 12347,
-        "ratings": {
-            "54321": 2,
-            "54322": 4
-        }
-    }
-]
-)
-```
+The obtain an initial dataset of jokes, run the hgp_crawler once, and then run `python export_jokes.py` to bring jokes from the `hgp_crawler` database into the `hgp_webapp` database.
