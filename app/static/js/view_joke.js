@@ -1,13 +1,10 @@
-
 var submitJoke = function() {
     var title = $('#titleField')[0].value;
     var content = $('#contentField')[0].value;
-    var jokeId = $('#jokeId')[0].value;
-
 
     var formdata = {
-    	'title': title,
-    	'content': content,
+        'title': title,
+        'content': content,
         'jokeId': jokeId
     };
 
@@ -22,7 +19,7 @@ var submitJoke = function() {
                 if (response.redirect) {
                     window.location.href = response.redirect;
                 } else if (response.msg) {
-                	console.log("Msg received: " + response.msg)
+                    console.log("Msg received: " + response.msg)
                 } else {
                     console.log("Joke was successfully updated.")
                 }
@@ -33,7 +30,7 @@ var submitJoke = function() {
         },
 
         dataType: "json",
-        contentType : "application/json;charset=UTF-8",
+        contentType: "application/json;charset=UTF-8",
     });
 }
 
@@ -63,6 +60,6 @@ var deleteJoke = function() {
         },
 
         dataType: "json",
-        contentType : "application/json;charset=UTF-8",
+        contentType: "application/json;charset=UTF-8",
     });
 }
