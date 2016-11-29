@@ -203,10 +203,16 @@ def view_joke(jokeId=None, category=None):
 
 @app.route('/update_joke', methods=['POST'])
 def update_joke():
-    # TODO: implement db update
+    if not session.get(key_email):
+        return redirect(url_for('login'))
+
+    if session.get(key_userType) != user_privileged:
+        return json.dumps({'msg': 'Must be an elevated user to modify or delete a joke.'})
+
     joke = request.get_json(force=True, silent=True)
     print joke
     print "joke_type: {}".format(type(joke))
+
     if 'jokeId' not in joke or 'title' not in joke or 'content' not in joke:
         return json.dumps({'msg': 'Joke update failed'})
 
@@ -237,6 +243,9 @@ def delete_joke():
     '''
     if not session.get(key_email):
         return redirect(url_for('login'))
+
+    if session.get(key_userType) != user_privileged:
+        return json.dumps({'msg': 'Must be an elevated user to modify or delete a joke.'})
 
     content = request.get_json(force=True, silent=True)
 
