@@ -202,7 +202,7 @@ def view_joke(jokeId=None, category=None):
 
 @app.route('/update_joke', methods=['POST'])
 def update_joke():
-    # TODO: implement
+    # TODO: implement db update
     joke = request.get_json(force=True, silent=True)
     print joke
     if 'jokeId' not in joke or 'title' not in joke or 'content' not in joke:
@@ -232,7 +232,8 @@ def delete_joke():
     if jokeId and session.get(key_userType) == user_privileged:
 
         # TODO: ensure remove_joke actually works
-        # models.remove_joke(jokeId)
+        print "Removing Joke w/ jokeId: {}".format(jokeId)
+        models.remove_joke(jokeId)
         jsonResponse = json.dumps( {
             key_message: msg_success,
             key_redirect: url_for('view_joke')
