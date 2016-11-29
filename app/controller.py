@@ -200,15 +200,33 @@ def view_joke(jokeId=None, category=None):
     return render_template('view_joke.html', joke_title=title, joke_content=content,
         privileged=privileged, jokeId=jokeId)
 
+
 @app.route('/update_joke', methods=['POST'])
 def update_joke():
     # TODO: implement db update
     joke = request.get_json(force=True, silent=True)
     print joke
+    print "joke_type: {}".format(type(joke))
     if 'jokeId' not in joke or 'title' not in joke or 'content' not in joke:
         return json.dumps({'msg': 'Joke update failed'})
 
-    return {'redirect': url_for('view_joke')}
+    joke['jokeId'] = int(joke['jokeId'])
+
+    the_joke = models.joke_by_jokeId(joke['jokeId'])
+    if the_joke is None:
+        return json.dumps({'msg': 'No joke found with that jokeId'})
+
+    print "JokeId: {}".format(joke['jokeId'])
+
+    # Now, make direct modifications to the joke content and title
+    the_joke.title = joke['title']
+    the_joke.content = joke['content']
+
+    # Save new joke to database
+    models.update_joke(the_joke)
+
+    return json.dumps({'redirect': url_for('view_joke')})
+
 
 @app.route('/delete_joke', methods=['POST'])
 def delete_joke():
