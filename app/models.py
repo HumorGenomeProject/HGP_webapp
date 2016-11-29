@@ -4,8 +4,9 @@ from jokes import field_jokeId, field_categories, Joke
 import json
 import random
 
+
 def user_by_userId(userId):
-    userJson = db.users.findOne({ field_userId: userId})
+    userJson = db.users.find_one({ field_userId: userId})
     if userJson:
         user = User.from_json(userJson)
         return user
@@ -27,6 +28,7 @@ def user_by_credentials(email, password):
     else:
         return None
 
+
 def user_by_email(email):
     userJson = db.users.find_one({ 'email':  email})
     if userJson:
@@ -45,7 +47,9 @@ def email_available(email):
 
 
 def joke_by_jokeId(jokeId):
-    jokeJson = db.jokes.findOne({ field_jokeId: jokeId})
+    jokeJson = db.jokes.find_one({ field_jokeId: jokeId})
+
+    print "JokeJson: {}".format(jokeJson)
 
     if jokeJson:
         joke = Joke.from_json(jokeJson)
@@ -78,6 +82,7 @@ def joke_by_category(category):
 
     return None
 
+
 def random_joke():
     count = db.jokes.count()
     rand_offset = random.randrange(count)
@@ -94,21 +99,16 @@ def random_joke():
 def update_user(some_user):
     if type(some_user) == User:
         userJson = some_user.to_json()
-        dbupdate = db.users.update(userJson, {'$set': userJson}, upsert=True)
-        print dbupdate
+        query = {'userId': some_user.userId}
+        db.users.update(query, {'$set': userJson}, upsert=True)
+
 
 def update_joke(some_joke):
-    if type(some_joke) == User:
+    if type(some_joke) == Joke:
         jokeJson = some_joke.to_json()
-        dbupdate = db.jokes.update(jokeJson, {'$set': jokeJson}, upsert=True)
-        print dbupdate
+        query = {'jokeId': some_joke.jokeId}
+        db.jokes.update(query, {'$set': jokeJson}, upsert=True)
 
-def generate_joke_id():
-    return 0
-
-def generate_user_id():
-    return 0
 
 def remove_joke(jokeId):
-    dbupdate = db.jokes.delete_one({ field_jokeId: jokeId })
-    print dbupdate
+    db.jokes.delete_one({ field_jokeId: jokeId })
