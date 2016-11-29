@@ -2,10 +2,13 @@
 var submitJoke = function() {
     var title = $('#titleField')[0].value;
     var content = $('#contentField')[0].value;
+    var jokeId = $('#jokeId')[0].value;
+
 
     var formdata = {
     	'title': title,
-    	'content': content
+    	'content': content,
+        'jokeId': jokeId
     };
 
     var data = JSON.stringify(formdata);
